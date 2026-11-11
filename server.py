@@ -45,6 +45,6 @@ h1{{color:#1a7f37}} code{{background:#eee;padding:2px 6px;border-radius:4px}}</s
 if __name__ == "__main__":
     print(f"Serving on port {PORT}. From Windows, open one of:")
     for ip in vm_ips():
-        print(f"  http://{ip}:{PORT}")
+        print(f"  http://[{ip}]:{PORT}" if ":" in ip else f"  http://{ip}:{PORT}")
     print("Press Ctrl+C to stop.")
     http.server.ThreadingHTTPServer(("0.0.0.0", PORT), Handler).serve_forever()
