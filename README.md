@@ -1,6 +1,6 @@
-# vbox-bridge-test
+# Izhan's Local Server (vbox-bridge-test)
 
-A one-file Python web server for checking that a VirtualBox (or VMware) VM on a
+Made by Izhan. A one-file Python web server for checking that a VirtualBox (or VMware) VM on a
 **bridged network adapter** can be reached from the host machine.
 
 No dependencies. It only needs `python3`, which Ubuntu already has.
@@ -23,11 +23,12 @@ python3 server.py
 It prints the URL(s) to open, for example:
 
 ```
-Serving on port 8080. From Windows, open one of:
-  http://192.168.1.45:8080
+Izhan's Local Server - made by Izhan
+Serving on port 9000. From Windows, open one of:
+  http://192.168.1.45:9000
 ```
 
-Use a different port with `python3 server.py 9000`.
+Default port is 9000. Use a different one with `python3 server.py 8080`.
 
 ## 3. Open it from Windows
 
@@ -39,12 +40,12 @@ bridge is working. The page also shows the VM's IP and your visitor IP.
 | Symptom | Fix |
 |---|---|
 | VM IP starts with `10.0.2.` | The adapter is still on NAT. Switch it to Bridged Adapter and run `sudo dhclient -r && sudo dhclient` or reboot the VM. |
-| Page doesn't load, but the VM's own browser loads `http://localhost:8080` | The Ubuntu firewall may be on: `sudo ufw allow 8080/tcp` |
+| Page doesn't load, but the VM's own browser loads `http://localhost:9000` | The Ubuntu firewall may be on: `sudo ufw allow 9000/tcp` |
 | No IP address at all | The wrong host network card is selected in the bridged adapter settings. |
 | Works from the VM but not from Windows on Wi-Fi | Some Wi-Fi networks (public, hotel, campus) block device-to-device traffic. Try Ethernet or a home network. |
 
 Quick check from Windows PowerShell:
 
 ```powershell
-Test-NetConnection <VM-IP> -Port 8080
+Test-NetConnection <VM-IP> -Port 9000
 ```
