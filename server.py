@@ -7,6 +7,7 @@ Run on the VM:   python3 server.py          (port 9000)
 Open on host:    http://<VM-IP>:9000
 """
 import datetime
+import errno
 import http.server
 import socket
 import subprocess
@@ -47,10 +48,32 @@ footer{{margin-top:40px;color:#777;font-size:.9em;border-top:1px solid #ddd;padd
         self.wfile.write(data)
 
 
+class Server(http.server.ThreadingHTTPServer):
+    allow_reuse_address = True  # restart instantly on the same port after stopping
+    daemon_threads = True       # open connections never block Ctrl+C
+
+
 if __name__ == "__main__":
+    try:
+        server = Server(("0.0.0.0", PORT), Handler)
+    except OSError as e:
+        if e.errno == errno.EADDRINUSE:
+            print(f"Port {PORT} is already in use by another program.")
+            print(f"  See what it is:   sudo lsof -i :{PORT}")
+            print(f"  Free the port:    sudo fuser -k {PORT}/tcp")
+            print(f"  Or use another:   python3 server.py {PORT + 1}")
+            sys.exit(1)
+        raise
+
     print("Izhan's Local Server - made by Izhan")
     print(f"Serving on port {PORT}. From Windows, open one of:")
     for ip in vm_ips():
         print(f"  http://[{ip}]:{PORT}" if ":" in ip else f"  http://{ip}:{PORT}")
     print("Press Ctrl+C to stop.")
-    http.server.ThreadingHTTPServer(("0.0.0.0", PORT), Handler).serve_forever()
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        server.server_close()
+        print("\nServer stopped. Port", PORT, "is free.")
